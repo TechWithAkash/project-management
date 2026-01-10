@@ -1,4 +1,49 @@
-import mailgen from "mailgen"
+import Mailgen from "mailgen";
+import nodemailer from "nodemailer"
+
+const sendEmail = async (options) => {
+
+    const mailGenerator = new Mailgen({
+        theme: "default",
+        product: {
+            name: "taskmanager",
+            link: "https://mywealthwise.tech"
+        }
+    });
+
+    const emailTextual = mailGenerator.generatePlaintext(options.mailgenContent);
+    const emailHTML = mailGenerator.generate(options.mailgenContent);
+
+    // ✅ FIX 1: Define transporter
+    const transporter = nodemailer.createTransport({
+        host: process.env.MAILTRAP_SMTP_HOST,
+        port: Number(process.env.MAILTRAP_SMTP_PORT),
+        auth: {
+            user: process.env.MAILTRAP_SMTP_USER,
+            pass: process.env.MAILTRAP_SMTP_PASSWORD // ✅ FIX 3
+        }
+    });
+
+    const mail = {
+        from: "mail.taskmanager@example.com",
+        to: options.email,
+        subject: options.subject,
+        text: emailTextual,
+        html: emailHTML,
+    };
+
+    try {
+        // ✅ FIX 2: sendMail (NOT sendEmail)
+        await transporter.sendMail(mail);
+        console.log("✅ Email sent successfully");
+    } catch (error) {
+        console.error("❌ Email Service Failed");
+        console.error(error);
+    }
+};
+
+
+
 
 const emailVerficationMailgenContent = (username, verificationUrl) => {
     return {
@@ -41,5 +86,6 @@ const forgotPasswordMailgenContent = (username, passwordResetUrl) => {
 
 export {
     emailVerficationMailgenContent,
-    forgotPasswordMailgenContent
+    forgotPasswordMailgenContent,
+    sendEmail
 }

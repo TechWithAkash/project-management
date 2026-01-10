@@ -64,10 +64,10 @@ const userSchema = new Schema(
 
 // PreHook to Hash The password
 userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+    if (!this.isModified("password")) return next;
 
     this.password = await bcrypt.hash(this.password, 10);
-    next();
+    next;
 })
 
 // Created a Method to Whether the Match the Password is Correct or not
@@ -116,4 +116,4 @@ userSchema.methods.generateTemporaryToken = function (){
 
 }
 
-export const user = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);

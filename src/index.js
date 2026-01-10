@@ -14,5 +14,5 @@ connectDB()
         })
     })
     .catch((error) => {
-        console.error("MongoDB Connectino Error".error)
+        console.error("MongoDB Connectino Error",error)
     })
