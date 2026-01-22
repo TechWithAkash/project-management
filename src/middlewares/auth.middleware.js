@@ -3,11 +3,12 @@ import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose"
 
 export const verifyJWT = asyncHandler(async (req, res, next) => {
 
     // Encoded Token Access
-    const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer", "")
+    const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
 
     if (!token) {
         throw new ApiError(401, "Unauthorized Request")
@@ -37,7 +38,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
 })
 
 export const validateProjectPermission = (roles = []) => {
-    asyncHandler(async (req, res, next) => {
+    return asyncHandler(async (req, res, next) => {
         const { projectId } = req.params
         if (!projectId) {
             throw new ApiError(404, "ProjectID is missing")
@@ -56,8 +57,8 @@ export const validateProjectPermission = (roles = []) => {
 
         if (!roles.includes(givenRole)) {
             throw new ApiError(
-                402,
-                "You do not have Persmission to perform this action"
+                403,
+                "You do not have Permission to perform this action"
             )
         }
 

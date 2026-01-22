@@ -21,7 +21,7 @@ router.use(verifyJWT)
 
 router
     .route("/")
-    .get(getProject)
+    .get(getProjects)
     .post(createProjectValidator(), validate, createProjects)
 
 router
